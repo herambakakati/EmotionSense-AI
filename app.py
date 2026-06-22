@@ -11,9 +11,8 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer, WordNetLemmatizer
 
-import gdown
-import zipfile
 import os
+import gdown
 
 # =====================================================
 # PAGE CONFIG
@@ -358,32 +357,27 @@ except:
 @st.cache_resource
 def load_model():
 
-    if not os.path.exists("distilbert_emotion_model"):
+    if not os.path.exists("tf_model.h5"):
 
         file_id = "1XVRWi8aiOMWXJYppEAx4_j-L-l7R0Tgz"
 
         gdown.download(
             f"https://drive.google.com/uc?id={file_id}",
-            "distilbert_emotion_model.zip",
+            "tf_model.h5",
             quiet=False
         )
 
-        with zipfile.ZipFile(
-            "distilbert_emotion_model.zip",
-            "r"
-        ) as zip_ref:
-            zip_ref.extractall(".")
-
     tokenizer = DistilBertTokenizer.from_pretrained(
-        "./distilbert_emotion_model"
+        ".",
+        local_files_only=True
     )
 
     model = TFDistilBertForSequenceClassification.from_pretrained(
-        "./distilbert_emotion_model"
+        ".",
+        local_files_only=True
     )
 
     return tokenizer, model
-
 
 tokenizer, model = load_model()
 
