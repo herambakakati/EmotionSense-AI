@@ -470,7 +470,8 @@ emotion_colors = {
     "Joy 😄":"#22c55e",
     "Love ❤️":"#ec4899",
     "Sadness 😢":"#3b82f6",
-    "Surprise 😲":"#8b5cf6"
+    "Surprise 😲":"#8b5cf6",
+    "Neutral 😐":"#64748b"
 
 }
 
@@ -598,7 +599,10 @@ if st.button("🚀 Analyze Emotion"):
             user_text
         )
         
-        emotion = emotion_map[prediction]
+        if confidence < 0.50:
+            emotion = "Neutral 😐"
+        else:
+            emotion = emotion_map[prediction]
         
         color = emotion_colors[emotion]
 
@@ -608,7 +612,8 @@ if st.button("🚀 Analyze Emotion"):
             "Joy 😄":"😄",
             "Love ❤️":"❤️",
             "Sadness 😢":"😢",
-            "Surprise 😲":"😲"
+            "Surprise 😲":"😲",
+            "Neutral 😐":"😐",
         }
 
         emotion_name = emotion.rsplit(" ",1)[0]
@@ -632,7 +637,10 @@ if st.button("🚀 Analyze Emotion"):
             "The analysis identifies indicators of anxiety, uncertainty, concern, or apprehension, reflecting emotions commonly associated with fear.",
 
             "Surprise 😲":
-            "The analysis detects a strong element of unexpectedness, excitement, astonishment, or curiosity in response to a situation or event."
+            "The analysis detects a strong element of unexpectedness, excitement, astonishment, or curiosity in response to a situation or event.",
+
+            "Neutral 😐":
+            "The submitted text does not contain sufficiently strong emotional signals. The AI model considers the emotional tone to be neutral or ambiguous.",
             
             }
 
@@ -683,7 +691,7 @@ if st.button("🚀 Analyze Emotion"):
         color:white;
         margin-bottom:12px;
         ">
-        Confidence Score: {confidence:.2%}
+        AI Confidence Level: {confidence:.2%}
         </div>
 
         <div style="
