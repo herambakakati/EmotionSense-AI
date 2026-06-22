@@ -599,7 +599,7 @@ if st.button("🚀 Analyze Emotion"):
             user_text
         )
         
-        if confidence < 0.50:
+        if confidence < 0.85:
             emotion = "Neutral 😐"
         else:
             emotion = emotion_map[prediction]
