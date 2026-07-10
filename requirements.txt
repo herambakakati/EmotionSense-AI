@@ -1,9 +1,8 @@
 streamlit
 tensorflow==2.16.1
-tf-keras==2.16.0
-transformers==4.38.2
+transformers==4.41.2
+tokenizers
 sentencepiece
 numpy
-pandas
-nltk
 gdown
+tf-keras
