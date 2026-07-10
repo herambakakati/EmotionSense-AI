@@ -350,70 +350,39 @@ try:
 except:
     nltk.download("wordnet")
 
-# =====================================================
-# LOAD MODEL
-# =====================================================
+# ==========================================================
+# LOAD MODEL FROM GOOGLE DRIVE
+# ==========================================================
+
+import os
+import gdown
+
+MODEL_DIR = "roberta_sarcasm_model"
 
 @st.cache_resource
 def load_model():
 
-    if not os.path.exists("tf_model.h5"):
+    if not os.path.exists(MODEL_DIR):
 
-        file_id = "1XVRWi8aiOMWXJYppEAx4_j-L-l7R0Tgz"
+        with st.spinner("Downloading RoBERTa model..."):
 
-        gdown.download(
-            f"https://drive.google.com/uc?id={file_id}",
-            "tf_model.h5",
-            quiet=False
-        )
+            gdown.download_folder(
+                url="https://drive.google.com/drive/folders/1huKEMDfaFjL1YnTjW5FDZkrpGvkVv7Pj",
+                output=".",
+                quiet=False,
+                use_cookies=False
+            )
 
-    tokenizer = DistilBertTokenizer.from_pretrained(
-        ".",
-        local_files_only=True
+    tokenizer = RobertaTokenizerFast.from_pretrained(
+        MODEL_DIR
     )
 
-    model = TFDistilBertForSequenceClassification.from_pretrained(
-        ".",
-        local_files_only=True
+    model = TFRobertaForSequenceClassification.from_pretrained(
+        MODEL_DIR
     )
 
     return tokenizer, model
-
 tokenizer, model = load_model()
-
-def predict_emotion(text):
-
-    encoded = tokenizer(
-        text,
-        truncation=True,
-        padding=True,
-        max_length=128,
-        return_tensors="tf"
-    )
-
-    outputs = model(encoded)
-
-    probabilities = tf.nn.softmax(
-        outputs.logits,
-        axis=1
-    )
-
-    prediction = int(
-        tf.argmax(
-            probabilities,
-            axis=1
-        ).numpy()[0]
-    )
-
-    confidence = float(
-        tf.reduce_max(
-            probabilities,
-            axis=1
-        ).numpy()[0]
-    )
-
-    return prediction, confidence
-
 
 # =====================================================
 # NLP PREPROCESSING
