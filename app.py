@@ -5,6 +5,13 @@ from transformers import (
     DistilBertTokenizer,
     TFDistilBertForSequenceClassification
 )
+import gdown
+
+from transformers import (
+    RobertaTokenizerFast,
+    TFRobertaForSequenceClassification
+)
+
 import re
 import nltk
 
@@ -163,13 +170,9 @@ rgba(0,255,136,0.12)
 );
 
 backdrop-filter:blur(20px);
-
 border:1px solid rgba(255,255,255,0.10);
-
 text-align:center;
-
 margin-bottom:20px;
-
 box-shadow:
 0px 10px 50px rgba(0,245,255,0.15),
 0px 10px 50px rgba(139,92,246,0.15);
@@ -193,13 +196,11 @@ linear-gradient(
 
 text-shadow:
 0 0 20px rgba(57,255,20,0.15);
-
 margin:0;
 }
             
 
 .hero-sub{
-
 font-size:20px;
 font-weight:700;
 color:#f8fafc;
@@ -258,15 +259,10 @@ rgba(139,92,246,0.04)
 color:white !important;
 
 border-radius:22px !important;
-
 border:1px solid rgba(0,245,255,0.18) !important;
-
 padding:18px !important;
-
 font-size:18px !important;
-
 line-height:1.8 !important;
-
 box-shadow:
 0px 8px 25px rgba(0,245,255,0.08);
 
@@ -286,15 +282,10 @@ box-shadow:
 width:100%;
 
 height:65px;
-
 border:none;
-
 border-radius:20px;
-
 font-size:22px;
-
 font-weight:800;
-
 background:
 linear-gradient(
 90deg,
@@ -315,7 +306,6 @@ box-shadow:
 .stButton > button:hover{
 
 transform:translateY(-3px);
-
 box-shadow:
 0px 15px 40px rgba(0,245,255,0.40);
 
@@ -325,11 +315,8 @@ box-shadow:
 /* Footer */
 
 .footer{
-
 text-align:center;
-
 padding:25px;
-
 color:#cbd5e1;
 }
 
@@ -351,7 +338,7 @@ except:
     nltk.download("wordnet")
 
 # ==========================================================
-# LOAD MODEL FROM GOOGLE DRIVE
+# LOAD ROBERTA MODEL
 # ==========================================================
 
 import os
@@ -362,26 +349,61 @@ MODEL_DIR = "roberta_sarcasm_model"
 @st.cache_resource
 def load_model():
 
-    if not os.path.exists(MODEL_DIR):
+    os.makedirs(MODEL_DIR, exist_ok=True)
 
-        with st.spinner("Downloading RoBERTa model..."):
+    files = {
 
-            gdown.download_folder(
-                url="https://drive.google.com/drive/folders/1huKEMDfaFjL1YnTjW5FDZkrpGvkVv7Pj",
-                output=".",
-                quiet=False,
-                use_cookies=False
+        "config.json":
+        "1kfm_IqWhEKkMoUycuwCBZhRhXVINYq2f",
+
+        "merges.txt":
+        "1K0gl8vX7-9uu4aLhfKhnz0J6vKQpuMoH",
+
+        "special_tokens_map.json":
+        "1uMy-ige9wuCMD5rijnaWTN0RYcvFs-vX",
+
+        "tf_model.h5":
+        "1KWrImeqXGqNGtI6tsU633wDMqmhHaGqW",
+
+        "tokenizer.json":
+        "1e3_L4kxmi1e_NVZsl5WCVHE3r6tEjTig",
+
+        "tokenizer_config.json":
+        "1Qh78fL7BQqAG6ZMx0AwYxKXxnNVmpL9J",
+
+        "vocab.json":
+        "1rc5XIWML5UHG_ucW1fzG3YxPVuaB0I3s"
+    }
+
+    with st.spinner("Loading RoBERTa Model..."):
+
+        for filename, file_id in files.items():
+
+            filepath = os.path.join(
+                MODEL_DIR,
+                filename
             )
+
+            if not os.path.exists(filepath):
+
+                gdown.download(
+                    f"https://drive.google.com/uc?id={file_id}",
+                    filepath,
+                    quiet=False
+                )
 
     tokenizer = RobertaTokenizerFast.from_pretrained(
         MODEL_DIR
     )
 
     model = TFRobertaForSequenceClassification.from_pretrained(
-        MODEL_DIR
+        MODEL_DIR,
+        from_pt=False
     )
 
     return tokenizer, model
+
+
 tokenizer, model = load_model()
 
 # =====================================================
