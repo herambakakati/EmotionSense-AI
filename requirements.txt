@@ -1,8 +1,8 @@
-streamlit==1.37.1
+streamlit
 tensorflow==2.16.1
-tf-keras==2.16.0
 transformers==4.41.2
-tokenizers==0.19.1
-sentencepiece==0.2.0
-numpy==1.26.4
-gdown==5.2.0
+tokenizers
+sentencepiece
+numpy
+gdown
+tf-keras
